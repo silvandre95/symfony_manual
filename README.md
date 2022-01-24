@@ -1,7 +1,18 @@
 
-## SYMFONY FRAMEWORK
+## SYMFONY MANUAL
 
-## Symfony é uma framework de PHP que utiliza o padrão MVC
+This project is a Symfony manual with some theory and examples of code.
+
+Run project:
+```
+ docker-compose up
+ ```
+
+[EVENTS](http://localhost:8000/events)
+
+[WORKFLOWS](http://localhost:8001/workflows)
+
+## Symfony is a PHP framework with MVC pattern
 
 Este padrão divide a aplicação em três camadas. `Model`, `Viewer` e `Controller`. O pedido do utilizador é efetuado ao `Controller` que a envia para o `Model` e logo de seguida recebe uma resposta. Esta resposta é entregue ao `Viewer` para apresentar ao utilizador.
 
