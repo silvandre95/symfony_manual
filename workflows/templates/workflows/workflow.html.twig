@@ -1,0 +1,51 @@
+
+{% block body %}
+
+<h1>Workflow example!</h1>
+
+Workflow database ID: <b>{{workflowId}}</b>
+
+<br>
+<br>
+
+Workflow name: <b>{{workflowName}}</b>
+
+<br>
+<br>
+
+Workflow places :
+
+<ul>
+{% for key, places in workflowPlaces %}
+    <li>{{ places }}</li>
+{% endfor %}
+</ul>
+
+Workflow initial place:
+
+<ul>
+{% for key, initialPlaces in workflowInicialPlaces %}
+    <li>{{ initialPlaces }}</li>
+{% endfor %}
+</ul>
+
+Workflow current place:
+<ul>
+    <li><b>{{ workflowCurrentPlace }}</b></li>
+</ul>
+
+{% if workflowEnabledTransactions|length > 0 %}
+Workflow enabled transactions:
+    <ul>
+    {% for key, enabledTransactions in workflowEnabledTransactions %}
+        <li><a href="{{ path ('workflowAction', {id: workflowId, transaction: enabledTransactions.name }) }}">{{ enabledTransactions.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <b>Congrats! You reached the end of the workflow!</b>
+{% endif %}
+
+<br>
+<h4><a href=" {{ path ('index') }}">HOME</a></h4>
+
+{% endblock %}

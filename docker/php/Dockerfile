@@ -1,4 +1,5 @@
-FROM webdevops/php-nginx:8.0-alpine
+# FROM toasterlint/php-apache-mysql:8.0-nowarn
+FROM webdevops/php-apache:8.0-alpine
 
 WORKDIR /app
 

@@ -3,88 +3,100 @@
 
 This project is a Symfony manual with some theory and examples of code.
 
+## Installing
+
+To run symfony, we must have `PHP` and `Composer` (used to install PHP packages) installed.
+
 Run project:
 ```
  docker-compose up
  ```
 
-[EVENTS](http://localhost:8000/events)
+## Microservices
+* [EVENTS](http://localhost:8000/events)
 
-[WORKFLOWS](http://localhost:8001/workflows)
+* [WORKFLOWS](http://localhost:8001/workflows)
+
+___
 
 ## Symfony is a PHP framework with MVC pattern
 
-Este padrão divide a aplicação em três camadas. `Model`, `Viewer` e `Controller`. O pedido do utilizador é efetuado ao `Controller` que a envia para o `Model` e logo de seguida recebe uma resposta. Esta resposta é entregue ao `Viewer` para apresentar ao utilizador.
+The `Model-View-Controller (MVC)` framework is an architectural pattern that separates an application into three main logical components `Model, View, and Controller`.
 
-## Installing
+### ``Model``
+The model component stores data and its related logic. It represents data that is being transferred between controller components or any other related business logic.
 
-Para correr o Symfony, precisamos de ter instalado na nossa máquina o `PHP` e o `Composer` (usado para instalar packages PHP).
+### ``View``
+A View is that part of the application that represents the presentation of data. It is the frontend.
 
+### ``Controller``
+The Controller is that part of the application that handles the user interaction. The controller interprets the mouse and keyboard inputs from the user, informing model and the view to change as appropriate.
+
+___
 ## DOCUMENTAÇÃO
 
-## Getting Started
+## The basics
+Our first page
 > [Criar a nossa primeira página](https://symfony.com/doc/current/page_creation.html)
 
-Para criarmos as nossas páginas, precisamos de lhes definir uma rota:
+To create our first pages, we must configure a route:
 > [Routing](https://symfony.com/doc/current/routing.html)
 
-`Controllers` é uma class onde definimos métodos e rotas:
+`Controllers` it's a class where we define methods for our routes:
 > [Controllers](https://symfony.com/doc/current/controller.html)
 
-`Templates` é onde colocamos o nosso código HTML
+`Templates` it's where we put ou HTML code.
 > [Templates](https://symfony.com/doc/current/templates.html)
 
 ## Security
-
-O Symfony dispõe de um bundle de segurança bastante útil no que toca a utilizadores/autenticação.
+Symfony uses a secutiry bundle very usefull for authentication.
 
 > [Security](https://symfony.com/doc/current/security.html)
 
-## The basics
-Configurar bases de dados
+## Database
+Install and config database settings
 > [Database](https://symfony.com/doc/current/doctrine.html)
 
-Criar formulários
+Create forms
 > [Forms](https://symfony.com/doc/current/forms.html)
 
-Testar código
+Testing our code
 > [Testing with PHPUnit](https://symfony.com/doc/current/testing.html)
 
 ## Events
 
-Fonte: https://symfony.com/doc/current/event_dispatcher.html
+Source: https://symfony.com/doc/current/event_dispatcher.html
 
-Os eventos são compostos por quatro elementos, `Event`, `Listener` ou `Subscriber` e `Dispatcher` e servem para os objetos interagirem entre sí. São muito usados para executar ações quando um evento é despoletado.
+The events are made up of four elements, `Event`, `Listener` or `Subscriber` and `Dispatcher`. Those are used to interact with objects.
 
-`Event` é uma ação que decorre em sistema.
+`Event` is an action that happens in our system.
 
-`Listener` e `Subscriber` ambos estão à escuta dos eventos para saber quando executar novos eventos.
+`Listener` and `Subscriber` are listening to events to know when to execute something.
 
-Diferença entre `Listener` e `Subscriber`:
+Difference between `Listener` and `Subscriber`:
 
-* `Listener` é mais fléxivel porque os bundles conseguem ativar ou inativar cada um.
+* `Listener` are more flexible because bundles can enable or disable each of them conditionally depending on some configuration value.
 
-* `Subscriber` são mais fáceis de usar porque mantêm na classe o conhecimento dos eventos.
+* `Subscriber` are easier to reuse because the knowledge of the events is kept in the class rather than in the service definition. This is the reason why Symfony uses subscribers internally.
 
+`Dispatcher` is responsible to notify the listener by the event name.
 
-`Dispatcher` é responsável por notificar todos os listener através do nome do evento.
-
-Para utilizarmos esta ferramenta precisamos de intalar o componente EventDispatcher.
+To use this bundle we have to intall the `event-dispatcher`.
 
 ```
 composer require symfony/event-dispatcher
 ```
 
-O primeiro passo é criar uma `Class`:
+First step is to create a `Class`:
 >App/Entity/User.php
 
-Segundo, criar `Event`:
+Second, create `Event`:
 >App/Event/UserRegisteredEvent.php
 
-Terceiro, criar `Listener` ou `Subscriber`
+Third, create `Listener` ou `Subscriber`
 >App/Event/UserRegisteredEventSubscriber.php
 
-Exemplo:
+Example:
 ```php
 public function index(EventDispatcherInterface $dispatcher): Response
     {
@@ -102,17 +114,14 @@ public function index(EventDispatcherInterface $dispatcher): Response
     }
 ```
 
-Para ver este exemplo a correr, executar comando:
- ```
- docker-compose up
- ```
 
- Ver exemplo [EVENTS](http://localhost:8000/events)
+
+Check out the result [EVENTS](http://localhost:8000/events)
 
 ## Workflows
 
-Fonte: https://symfony.com/doc/current/workflow.html
+Source: https://symfony.com/doc/current/workflow.html
 
-Um `Workflow` é um componente que permite definir o processo/ciclo de um objeto.
+`Workflow` is a component that allow us to define a process/cicle of an object.
 
 

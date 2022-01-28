@@ -1,0 +1,51 @@
+
+{% block body %}
+
+<h1> Workflows </h1>
+
+<h4><a href=" {{ path ('workflowsAdd') }}">Create new workflow</a><h4/>
+
+
+<table border=1 style="width: 100%;">
+    <tr>
+        <th>
+            ID
+        </th>
+        <th>
+            Status
+        </th>
+        <th>
+            Title
+        </th>
+        <th>
+            Content
+        </th>
+        <th>
+            Action
+        </th>
+    </tr>
+
+    {% for key, workflow in workflows %}
+        <tr>
+            <td>
+                <div align="center">{{ workflow.id }}</div>
+            </td>
+            <td>
+                <b>{{ workflow.currentPlace }}</b>
+            </td>
+            <td>
+                {{ workflow.title }}
+            </td>
+            <td>
+                {{ workflow.content }}
+            </td>
+            <td>
+                <div align="center"><a href="{{ path ('workflow', { id:workflow.id }) }}">Go to workflow!</a></div>
+                <div align="center"><a href="{{ path ('workflowReset', { id:workflow.id }) }}">Reset workflow!</a></div>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+
+{% endblock %}

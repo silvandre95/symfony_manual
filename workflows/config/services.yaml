@@ -21,5 +21,9 @@ services:
             - '../src/Kernel.php'
             - '../src/Tests/'
 
+    App\Entity\BlogPost:
+        # redundant thanks to _defaults, but value is overridable on each service
+        autowire: false
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
