@@ -9,19 +9,27 @@ framework:
         property: "currentPlace"
       supports:
         - App\Entity\BlogPost
-      initial_marking: draft
+      initial_marking: planning
       places:
+        - planning
         - draft
         - reviewed
         - rejected
         - published
       transitions:
+        draft:
+          guard: "is_granted('ROLE_USER')"
+          from: planning
+          to: draft
         to_review:
+          guard: "is_granted('ROLE_USER')"
           from: draft
           to: reviewed
         publish:
+          guard: "is_granted('ROLE_ADMIN')"
           from: reviewed
           to: published
         reject:
+          guard: "is_granted('ROLE_ADMIN')"
           from: reviewed
           to: rejected

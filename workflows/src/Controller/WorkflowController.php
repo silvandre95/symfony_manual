@@ -3,9 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\BlogPost;
+use App\Forms\WorkflowForms;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Doctrine\Persistence\ManagerRegistry;
 use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -42,14 +48,14 @@ class WorkflowController extends AbstractController
 
         $blogPost = new BlogPost();
 
-        $blogPost->setCurrentPlace('draft');
-        $blogPost->setTitle('Blog Publishing Workflow');
-        $blogPost->setContent('Blog Publishing Workflow');
+        $blogPost->setCurrentPlace('planning');
 
         $entityManager->persist($blogPost);
         $entityManager->flush();
 
-        return $this->redirectToRoute('index');
+        $id = $blogPost->getId();
+
+        return $this->redirectToRoute('workflow', ['id' => $id]);
     }
 
     /**
@@ -65,11 +71,19 @@ class WorkflowController extends AbstractController
 
         $blogPost->setCurrentPlace($curentPlace);
 
+        //dd($this->blogPublishingWorkflow->getEnabledTransitions($blogPost));
+        //dd(array_key_last($this->blogPublishingWorkflow->getDefinition($blogPost)->getPlaces()));
         $workflowName = $this->blogPublishingWorkflow->getName($blogPost);
         $workflowPlaces = $this->blogPublishingWorkflow->getDefinition($blogPost)->getPlaces();
         $workflowInicialPlaces = $this->blogPublishingWorkflow->getDefinition($blogPost)->getInitialPlaces();
         $workflowCurrentPlace = array_key_first($blogPost->getCurrentPlace());
         $workflowEnabledTransactions = $this->blogPublishingWorkflow->getEnabledTransitions($blogPost);
+
+        $form = $this->createForm(WorkflowForms::class, $blogPost, [
+            'attr' => ['formName' => $workflowCurrentPlace],
+            'action' => $this->generateUrl('workflowAction', ['id' => $id]),
+            'method' => 'POST'
+        ]);
 
         return $this->render('workflows/workflow.html.twig', [
             'workflowId' => $id,
@@ -77,15 +91,18 @@ class WorkflowController extends AbstractController
             'workflowPlaces' => $workflowPlaces,
             'workflowInicialPlaces' => $workflowInicialPlaces,
             'workflowCurrentPlace' => $workflowCurrentPlace,
-            'workflowEnabledTransactions' => $workflowEnabledTransactions
+            'workflowEnabledTransactions' => $workflowEnabledTransactions,
+            'form' => $form->createView()
         ]);
     }
 
     /**
-     * @Route("/workflows/{id}/action/{transaction}", name="workflowAction")
+     * @Route("/workflows/{id}/action", name="workflowAction")
      */
-    public function action(ManagerRegistry $manager, $id, $transaction)
+    public function action(ManagerRegistry $manager, Request $request, $id)
     {
+        $transaction = $request->request->get('transaction');
+
         $entityManager = $manager->getManager();
 
         $blogPost = $entityManager->getRepository(BlogPost::class)->find($id);
@@ -94,10 +111,27 @@ class WorkflowController extends AbstractController
 
         $blogPost->setCurrentPlace($curentPlace);
 
+        if(isset($request->request->all('workflow_forms')['title']))
+        {
+            $blogPost->setTitle($request->request->all('workflow_forms')['title']);
+        }
+        if(isset($request->request->all('workflow_forms')['content']))
+        {
+            $blogPost->setContent($request->request->all('workflow_forms')['content']);
+        }
+        if(isset($request->request->all('workflow_forms')['rating']))
+        {
+            $blogPost->setRating($request->request->all('workflow_forms')['rating']);
+        }
+        if(isset($request->request->all('workflow_forms')['rejection']))
+        {
+            $blogPost->setRejection($request->request->all('workflow_forms')['rejection']);
+        }
+
         try {
             $this->blogPublishingWorkflow->apply($blogPost, $transaction);
         } catch (LogicException $exception) {
-            throw new LogicException($exception);
+            throw $exception;
         }
 
         $workflowName = $this->blogPublishingWorkflow->getName($blogPost);
@@ -111,13 +145,20 @@ class WorkflowController extends AbstractController
         $entityManager->persist($blogPost);
         $entityManager->flush();
 
+        $form = $this->createForm(WorkflowForms::class, $blogPost, [
+            'attr' => ['formName' => $workflowCurrentPlace],
+            'action' => $this->generateUrl('workflowAction', ['id' => $id]),
+            'method' => 'POST'
+        ]);
+
         return $this->render('workflows/workflow.html.twig', [
             'workflowId' => $id,
             'workflowName' => $workflowName,
             'workflowPlaces' => $workflowPlaces,
             'workflowInicialPlaces' => $workflowInicialPlaces,
             'workflowCurrentPlace' => $workflowCurrentPlace,
-            'workflowEnabledTransactions' => $workflowEnabledTransactions
+            'workflowEnabledTransactions' => $workflowEnabledTransactions,
+            'form' => $form->createView()
         ]);
     }
 
@@ -130,7 +171,7 @@ class WorkflowController extends AbstractController
 
         $blogPost = $entityManager->getRepository(BlogPost::class)->find($id);
 
-        $blogPost->setCurrentPlace('draft');
+        $blogPost->setCurrentPlace('planning');
 
         $entityManager->persist($blogPost);
         $entityManager->flush();

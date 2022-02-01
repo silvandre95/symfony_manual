@@ -35,12 +35,19 @@ Workflow current place:
 </ul>
 
 {% if workflowEnabledTransactions|length > 0 %}
-Workflow enabled transactions:
-    <ul>
-    {% for key, enabledTransactions in workflowEnabledTransactions %}
-        <li><a href="{{ path ('workflowAction', {id: workflowId, transaction: enabledTransactions.name }) }}">{{ enabledTransactions.name }}</a></li>
-    {% endfor %}
-    </ul>
+    Workflow enabled transactions:
+    <br>
+    {{ form_start(form) }}
+        {% for key, enabledTransactions in workflowEnabledTransactions %}
+            <ul>
+                <li>
+                    <input type="radio" required="required" id="{{ enabledTransactions.name }}" name="transaction" value="{{ enabledTransactions.name }}">
+                    <label for="{{ enabledTransactions.name }}">{{ enabledTransactions.name }}</label>
+                </li>
+            </ul>
+        {% endfor %}
+        {{ form_widget(form) }}
+    {{ form_end(form) }}
 {% else %}
     <b>Congrats! You reached the end of the workflow!</b>
 {% endif %}

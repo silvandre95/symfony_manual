@@ -93,7 +93,7 @@ class BlogPost
         return $this;
     }
 
-    public function getRejection(): ?int
+    public function getRejection(): ?string
     {
         return $this->rejection;
     }

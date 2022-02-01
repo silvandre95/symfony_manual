@@ -3,7 +3,7 @@
 
 <h1> Workflows </h1>
 
-<h4><a href=" {{ path ('workflowsAdd') }}">Create new workflow</a><h4/>
+<h4><a href=" {{ path ('workflowsAdd') }}">Create new workflow</a></h4>
 
 
 <table border=1 style="width: 100%;">
@@ -46,6 +46,17 @@
         </tr>
     {% endfor %}
 </table>
+<br>
+
+{% if app.user %}
+    You are logged in as <b>{{ app.user.username }}</b>
+    <br>
+    <br>
+    Role: <b>{{ app.user.roles[0] }}</b>
+    <br>
+    <br>
+    <a href="{{ path ('app_logout') }}">Logout</a>
+{% endif %}
 
 
 {% endblock %}
