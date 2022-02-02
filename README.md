@@ -7,10 +7,16 @@ This project is a Symfony manual with some theory and examples of code.
 
 To run symfony, we must have `PHP` and `Composer` (used to install PHP packages) installed.
 
-Run project:
+To run this project:
 ```
  docker-compose up
- ```
+```
+Attach Shell to workflow container and run:
+```
+php bin/console doctrine:database:create
+php bin/console doctrine:migrations:migrate
+php bin/console doctrine:fixtures:load
+```
 
 ## Microservices
 * [EVENTS](http://localhost:8000/events)
@@ -124,4 +130,57 @@ Source: https://symfony.com/doc/current/workflow.html
 
 `Workflow` is a component that allow us to define a process/cicle of an object.
 
+This is an example of a blog post workflow:
 
+```yaml
+framework:
+  workflows:
+    blog_publishing:
+      type: "workflow" # or 'state_machine'
+      audit_trail:
+        enabled: true
+      marking_store:
+        type: "method"
+        property: "currentPlace"
+      supports:
+        - App\Entity\BlogPost
+      initial_marking: planning
+      places:
+        - planning
+        - draft
+        - reviewed
+        - rejected
+        - published
+      transitions:
+        draft:
+          guard: "is_granted('ROLE_USER')"
+          from: planning
+          to: draft
+        to_review:
+          guard: "is_granted('ROLE_USER')"
+          from: draft
+          to: reviewed
+        publish:
+          guard: "is_granted('ROLE_ADMIN')"
+          from: reviewed
+          to: published
+        reject:
+          guard: "is_granted('ROLE_ADMIN')"
+          from: reviewed
+          to: rejected
+```
+In this workflow we have 5 places:
+* Planning
+* Draft
+* Reviewed
+* Rejected
+* Published
+
+To see how this workflow runs, go to [WORKFLOWS LOGIN](http://localhost:8001/login) and use one of the users below to login.
+
+| Username | Password | Roles |
+| -------- | -------- | ----- |
+| joselourenco | administrador | ADMIN |
+| andresilva | utilizador | USER |
+
+The **USER** role can create, plan, send to draft and then to review. The **ADMIN** role is the only who can reject or publish the blog.
